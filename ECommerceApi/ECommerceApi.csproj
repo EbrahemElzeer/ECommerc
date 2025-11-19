@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.Presention\ECommerce.Presentation.csproj" />
-    <ProjectReference Include="..\ECommerce.Presistence\ECommerce.Presistence.csproj" />
+    <ProjectReference Include="..\ECommerce.Presistence\ECommerce.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

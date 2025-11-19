@@ -9,9 +9,9 @@ namespace ECommerce.Domin.Model.ProductModel
     public class Product:BaseEntity<int>
     {
      
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public string PictureUrl { get; set; } = null!;
+        public string Name { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public string PictureUrl { get; set; } = default!;
         public decimal Price { get; set; }
 
 

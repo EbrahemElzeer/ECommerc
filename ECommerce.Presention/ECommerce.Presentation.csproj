@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App"></FrameworkReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ECommerce.Service.Abstraction\ECommerce.Service.Abstraction.csproj" />
+	</ItemGroup>
 </Project>

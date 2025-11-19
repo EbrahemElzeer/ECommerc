@@ -8,5 +8,6 @@ namespace ECommerce.Domin.Model.ProductModel
 {
     public class ProductType : BaseEntity<int>
     {
+        public string Name { get; set; } = default!;
     }
 }
