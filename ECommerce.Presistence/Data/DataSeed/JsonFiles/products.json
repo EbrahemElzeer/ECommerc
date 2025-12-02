@@ -37,7 +37,7 @@
     "Price": 850,
     "PictureUrl": "images/products/FormalBlazer.jpg",
     "ProductTypeId": 3,
-    "ProductProductBrandId": 4
+    "ProductBrandId": 4
   },
   {
     "Name": "Summer Floral Dress",
@@ -45,7 +45,7 @@
     "Price": 450,
     "PictureUrl": "images/products/SummerFloralDress.jpg",
     "ProductTypeId": 3,
-    "ProductProductBrandId": 5
+    "ProductBrandId": 5
   },
   {
     "Name": "Men's Leather Jacket",

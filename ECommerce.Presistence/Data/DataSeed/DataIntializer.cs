@@ -15,74 +15,81 @@ namespace ECommerce.Persistence.Data.DataSeed
 {
     public class DataIntializer : IDataIntializer
     {
-        private readonly StoreDbContext _storeDbContext;
+        private readonly StoreDbContext _dbContext;
+        
 
-        public DataIntializer(StoreDbContext storeDbContext)
+        public DataIntializer(StoreDbContext dbContext)
         {
-            _storeDbContext = storeDbContext;
+            _dbContext = dbContext;
+         
         }
-        public async Task  IntializeAsync()
+        public async Task IntializeAsync()
         {
             try
             {
-                var hasProducrts =await  _storeDbContext.Products.AnyAsync();
-                var hasProductBrands =await  _storeDbContext.ProductBrands.AnyAsync();
-                var hasProductTypes =await _storeDbContext.ProductTypes.AnyAsync();
 
-                if (hasProducrts && hasProductBrands && hasProductTypes)
+                var hasProducts = await _dbContext.Products.AnyAsync();
+                var hasBrands = await _dbContext.ProductBrands.AnyAsync();
+                var hasTypes = await _dbContext.ProductTypes.AnyAsync();
+
+                if (hasProducts && hasBrands && hasTypes)
                 {
                     return;
                 }
 
-                if (!hasProductBrands)
+                if (!hasBrands)
                 {
-                    await SeedDataFromJson<ProductBrand, int>("brands.json", _storeDbContext.ProductBrands);
+                    await SeedDataFromJson<ProductBrand, int>("brands.json", _dbContext.ProductBrands);
                 }
-                if (!hasProductTypes)
-                {
-                     await  SeedDataFromJson<ProductType, int>("types.json", _storeDbContext.ProductTypes);
-            }
-                _storeDbContext.SaveChanges();
 
-                if (!hasProducrts)
+                if (!hasTypes)
                 {
-                  await    SeedDataFromJson<Product, int>("products.json", _storeDbContext.Products);
-                    _storeDbContext.SaveChanges();
+                    await SeedDataFromJson<ProductType, int>("types.json", _dbContext.ProductTypes);
+
+                }
+                _dbContext.SaveChanges();
+                if (!hasProducts)
+                {
+                    await SeedDataFromJson<Product, int>("products.json", _dbContext.Products);
+                    await _dbContext.SaveChangesAsync();
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error Occured During Data Intialization {ex}");
+            }
+        }
+        private async Task SeedDataFromJson<T, TKey>(string fileName, DbSet<T> dbset) where T : BaseEntity<TKey>
+        {
+            var filePath = @"../ECommerce.Presistence\Data\DataSeed\JsonFiles\" + fileName;
+
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("File Not Found", filePath);
+            }
+
+            try
+            {
+                using var dataStream = File.OpenRead(filePath);
+
+                var data = await JsonSerializer.DeserializeAsync<List<T>>(dataStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (data is not null)
+                {
+                    await dbset.AddRangeAsync(data);
                 }
 
             }
             catch (Exception ex)
             {
-                throw new Exception("Error while seeding data to database", ex);
-            }
-            ;
-        }
-        private async Task SeedDataFromJson<T, TKey>(string fileName, DbSet<T> dbset) where T : BaseEntity<TKey>
-        {
-            var path = @"../ECommerce.Persistence\Data\DataSeed\JsonFiles\" + fileName;
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException("Json file not found", path);
-            }
 
-            try
-            {
-             using   var dataStream = File.OpenRead(path);
-                var data=await   JsonSerializer.DeserializeAsync<List<T>>(dataStream,new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive= true
-                });
-                if(data != null )
-                {
-                   await dbset.AddRangeAsync(data);
-                  
-                }
-
-            }catch(Exception ex)
-            {
-                throw new Exception("Error while reading data form json", ex);
+                Console.WriteLine($"Error Happen WHile Reading Data From Json {ex}");
             }
-
 
         }
     }

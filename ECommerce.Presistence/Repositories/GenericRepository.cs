@@ -34,6 +34,18 @@ namespace ECommerce.Presistence.Repositories
 
         }
 
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity,TKey> specifications)
+        {
+        IQueryable<TEntity> query = _storeDbContext.Set<TEntity>();
+            if(specifications.IncludeExpression !=null && specifications.IncludeExpression.Any())
+            {
+                foreach(var includeExp in specifications.IncludeExpression)
+                {
+                                       query = query.Include(includeExp);
+                }
+            }
+            return await query.ToListAsync();
+        }
         public async Task<TEntity?> GetByIdAsync(TKey id)
         {
           return  await _storeDbContext.Set<TEntity>().FindAsync(id);
