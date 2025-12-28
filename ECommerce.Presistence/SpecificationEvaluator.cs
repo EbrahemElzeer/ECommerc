@@ -1,12 +1,6 @@
 ﻿using ECommerce.Domin.Contracts;
 using ECommerce.Domin.Model;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
-using System.Collections.Generic;
-using System.Formats.Tar;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Presistence
 {
@@ -22,6 +16,26 @@ namespace ECommerce.Presistence
                 {
                     query= specifications.IncludeExpression.Aggregate(query, (current, includeExp) => current.Include(includeExp));
                 }
+                if (specifications.Criteria != null)
+                {
+                                       query= query.Where(specifications.Criteria);
+                }
+
+                if(specifications.OrderBy is not null)
+                {
+                    query=query.OrderBy(specifications.OrderBy);
+                }
+                if(specifications.OrderByDescending is not null)
+                {
+                    query=query.OrderByDescending(specifications.OrderByDescending);
+                }
+
+                if(specifications.IsPaginated)
+                {
+                    query=query.Skip(specifications.Skip).Take(specifications.Take);
+                }
+
+
             }
 
             return query;

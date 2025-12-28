@@ -2,13 +2,11 @@
 using ECommerce.Domin.Contracts;
 using ECommerce.Domin.Model.ProductModel;
 using ECommerce.Service.Abstraction;
+using ECommerce.Service.Specifications.ProductsSpecifications;
+using ECommerce.Shared;
+using ECommerce.Shared.CommonRespones;
 using ECommerce.Shared.Dtos.productDtos;
 using ECommerce.Shared.Dtos.ProductDtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerce.Service
 {
@@ -22,10 +20,14 @@ namespace ECommerce.Service
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams)
         {
-         var products=  await _unitOfWork.GetRepostory<Product,int>().GetAllAsync();
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            var specifications = new ProductsWithTypeAndBrandSpecification(queryParams);
+            var products=  await _unitOfWork.GetRepostory<Product,int>().GetAllAsync(specifications);
+            var result= _mapper.Map<IEnumerable<ProductDto>>(products);
+            var countSpecifications = new ProductWithCountSpecification(queryParams);
+            var countOfReturn=await _unitOfWork.GetRepostory<Product,int>().CountAsync(countSpecifications);
+            return new PaginatedResult<ProductDto>(queryParams.PageIndex,queryParams.PageSize,countOfReturn,result);
         }
 
         public async Task<IEnumerable<BrandDto>> GetAllBrandsAsync()
@@ -41,10 +43,13 @@ namespace ECommerce.Service
             return _mapper.Map<IEnumerable<TypeDto>>(Types);
         }
 
-        public async Task<ProductDto> GetProductByIdAsync(int id)
+        public async Task<Result<ProductDto>> GetProductByIdAsync(int id)
         {
-            var product =await _unitOfWork.GetRepostory<Product,int>().GetByIdAsync(id);
-            return _mapper.Map<ProductDto>(product);
+            var specifications = new ProductsWithTypeAndBrandSpecification(id);
+            var product =await _unitOfWork.GetRepostory<Product,int>().GetByIdAsync(specifications);
+            if (product == null)
+                return Result<ProductDto>.Fail( Error.NotFound("Product Not Found"));
+            return Result<ProductDto>.Ok( _mapper.Map<ProductDto>(product));
         }
     }
 }

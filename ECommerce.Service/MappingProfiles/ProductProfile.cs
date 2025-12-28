@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Service.MappingProfiles
 {
-    public class ProductProfile:Profile
+    internal class ProductProfile:Profile
     {
         public ProductProfile() {
 
@@ -19,7 +19,8 @@ namespace ECommerce.Service.MappingProfiles
             CreateMap<Product, ProductDto>()
                 
                .ForMember(dest=>dest.ProductBrand,opt=>opt.MapFrom(src=>src.ProductBrand.Name ))
-               .ForMember(dest=>dest.ProductType,opt=>opt.MapFrom(src=>src.ProductType));
+               .ForMember(dest=>dest.ProductType,opt=>opt.MapFrom(src=>src.ProductType.Name))
+               .ForMember(dest=>dest.PictureUrl,opt=>opt.MapFrom<ProductPictureResolver>());
        
         }
     }

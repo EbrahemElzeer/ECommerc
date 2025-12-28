@@ -1,4 +1,6 @@
-﻿using ECommerce.Service.Abstraction;
+﻿using ECommerce.Presentation.Attribuites;
+using ECommerce.Service.Abstraction;
+using ECommerce.Shared;
 using ECommerce.Shared.Dtos.productDtos;
 using ECommerce.Shared.Dtos.ProductDtos;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +23,10 @@ namespace ECommerce.Presentation.Controllers
             _productService = productService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        [RedisCache(60)]
+        public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
         {
-            var result = await _productService.GetAllProductsAsync();
+            var result = await _productService.GetAllProductsAsync(queryParams);
             return Ok(result);
 
 
