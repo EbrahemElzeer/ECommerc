@@ -69,5 +69,9 @@ namespace ECommerce.Shared.CommonRespones
             return new Result<TValue>(errors);
         }
 
+        public static implicit operator Result<TValue>(TValue value) => Ok(value);
+        public static implicit operator Result<TValue>(List<Error> errors) => Fail(errors);
+        public static implicit operator Result<TValue>(Error error) => Fail(error);
+
     }
 }

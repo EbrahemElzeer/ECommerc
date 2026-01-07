@@ -48,8 +48,8 @@ namespace ECommerce.Service
             var specifications = new ProductsWithTypeAndBrandSpecification(id);
             var product =await _unitOfWork.GetRepostory<Product,int>().GetByIdAsync(specifications);
             if (product == null)
-                return Result<ProductDto>.Fail( Error.NotFound("Product Not Found"));
-            return Result<ProductDto>.Ok( _mapper.Map<ProductDto>(product));
+                return Error.NotFound("Product Not Found");
+            return  _mapper.Map<ProductDto>(product);
         }
     }
 }

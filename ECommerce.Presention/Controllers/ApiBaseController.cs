@@ -1,0 +1,73 @@
+﻿using ECommerce.Shared.CommonRespones;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ECommerce.Presentation.Controllers
+{
+    [ApiController]
+    [Route("api/[Controller]")]
+    public class ApiBaseController : ControllerBase
+    {
+        protected IActionResult HandelResult(Result result)
+        {
+            if (result.IsSuccess) return NoContent();
+            else return HandelProblem(result.Errors);
+        }
+
+        protected ActionResult<TValue> HandelResult<TValue>(Result<TValue> result)
+        {
+            if (result.IsSuccess) return Ok(result.Value);
+            else return HandelProblem(result.Errors);
+        }
+
+        private ActionResult HandelProblem(IReadOnlyList<Error> errors)
+        {
+            if (errors.Count == 0)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "An Error Occurred"
+                    );
+            }
+            if (errors.All(e => e.ErrorType == ErrorType.validation)) return HandelValidationErrors(errors);
+            return HandelSingleError(errors[0]);
+
+        }
+
+        private ActionResult HandelSingleError(Error error)
+        {
+            return Problem(
+                title: error.Code,
+                detail: error.Description,
+                type: error.ErrorType.ToString(),
+                statusCode: MapErorrTypeIntoStatusCode(error.ErrorType));
+
+        }
+        private ActionResult HandelValidationErrors(IReadOnlyList<Error> errors)
+        {
+            var modelState=new ModelStateDictionary();
+            foreach (var error in errors)
+            {
+                modelState.AddModelError(error.Code, error.Description);
+            }
+            return ValidationProblem(modelState);
+        }
+
+        private static int MapErorrTypeIntoStatusCode(ErrorType errorType)
+            => errorType switch
+            {
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+                ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+                ErrorType.validation => StatusCodes.Status400BadRequest,
+                ErrorType.InvalidCredintals => StatusCodes.Status400BadRequest,
+                _ => StatusCodes.Status500InternalServerError
+            };
+    }
+}

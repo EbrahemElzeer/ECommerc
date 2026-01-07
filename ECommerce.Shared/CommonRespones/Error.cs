@@ -16,21 +16,19 @@ namespace ECommerce.Shared.CommonRespones
         }
 
 
-        public string Code { get; set; } 
+        public string Code { get; set; }
         public string Description { get; set; }
 
         public ErrorType ErrorType { get; set; }
 
-        public static Error Faliure(
-    string code = "Genaral.Faliure",
-    string description = "A general Faliure Has Occured"
-)
+        public static Error Faliure( string code = "Genaral.Faliure",string description = "A general Faliure Has Occured")
+  
         {
             return new Error(code, description, ErrorType.Faliure);
         }
 
         public static Error Validation(
-            string code = "Genaral.Validation",
+         string code = "Genaral.Validation",
             string description = "Validation Error Has Occured"
         )
         {
