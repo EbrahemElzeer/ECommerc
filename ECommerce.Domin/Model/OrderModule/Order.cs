@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Domin.Model.OrderModule
 {
-    public class Order
+    public class Order:BaseEntity<Guid>
     {
         public string UserEmail { get; set; } = default!;
         public int DeliveryMethodId { get; set; }
         public DateTimeOffset OrderDate { get; set; }= DateTimeOffset.Now;
         public OrderStatus status {  get; set; }= OrderStatus.Pending;
-        public OrderAdderess Adderess { get; set; }= default!;
+        public OrderAdderess Address { get; set; }= default!;
         public DeliveryMethod DeliveryMethod { get; set; }= default!;
         public ICollection<OrderItem> OrderItems { get; set; }= [];
         public decimal Subtotal { get; set; }

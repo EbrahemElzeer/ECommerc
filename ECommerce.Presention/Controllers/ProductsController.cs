@@ -39,7 +39,7 @@ namespace ECommerce.Presentation.Controllers
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var result= await  _productService.GetProductByIdAsync(id);
-            return HandelResult<ProductDto>(result);
+            return HandleResult<ProductDto>(result);
         }
 
         [HttpGet("brands")]

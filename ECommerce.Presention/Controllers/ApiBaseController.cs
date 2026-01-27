@@ -5,28 +5,29 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ECommerce.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/[controller]")]
     public class ApiBaseController : ControllerBase
     {
-        protected IActionResult HandelResult(Result result)
+        protected IActionResult HandleResult(Result result)
         {
             if (result.IsSuccess) return NoContent();
-            else return HandelProblem(result.Errors);
+            else return HandleProblem(result.Errors);
         }
 
-        protected ActionResult<TValue> HandelResult<TValue>(Result<TValue> result)
+        protected ActionResult<TValue> HandleResult<TValue>(Result<TValue> result)
         {
             if (result.IsSuccess) return Ok(result.Value);
-            else return HandelProblem(result.Errors);
+            else return HandleProblem(result.Errors);
         }
 
-        private ActionResult HandelProblem(IReadOnlyList<Error> errors)
+        private ActionResult HandleProblem(IReadOnlyList<Error> errors)
         {
             if (errors.Count == 0)
             {
@@ -35,12 +36,12 @@ namespace ECommerce.Presentation.Controllers
                     title: "An Error Occurred"
                     );
             }
-            if (errors.All(e => e.ErrorType == ErrorType.validation)) return HandelValidationErrors(errors);
-            return HandelSingleError(errors[0]);
+            if (errors.All(e => e.ErrorType == ErrorType.validation)) return HandleValidationErrors(errors);
+            return HandleSingleError(errors[0]);
 
         }
 
-        private ActionResult HandelSingleError(Error error)
+        private ActionResult HandleSingleError(Error error)
         {
             return Problem(
                 title: error.Code,
@@ -49,7 +50,7 @@ namespace ECommerce.Presentation.Controllers
                 statusCode: MapErorrTypeIntoStatusCode(error.ErrorType));
 
         }
-        private ActionResult HandelValidationErrors(IReadOnlyList<Error> errors)
+        private ActionResult HandleValidationErrors(IReadOnlyList<Error> errors)
         {
             var modelState=new ModelStateDictionary();
             foreach (var error in errors)
@@ -69,5 +70,13 @@ namespace ECommerce.Presentation.Controllers
                 ErrorType.InvalidCredintals => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
+
+
+
+
+
+
+
+        protected string GetEmailFRomToken() => User.FindFirstValue(ClaimTypes.Email)!;
     }
 }

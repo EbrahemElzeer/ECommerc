@@ -24,14 +24,14 @@ namespace ECommerce.Presentation.Controllers
         public async Task<ActionResult<UserDto>> LoginAsync(LoginDto loginDto)
         {
             var result = await _authenticationService.LoginAsync(loginDto);
-            return HandelResult(result);
+            return HandleResult(result);
         }
 
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> RegisterAsync(RegisterDto registerDto)
         {
             var result = await _authenticationService.RegisterAsync(registerDto);
-            return HandelResult(result);
+            return HandleResult(result);
         }
 
         [HttpGet("emailExists")]
@@ -47,7 +47,7 @@ namespace ECommerce.Presentation.Controllers
             {
             var email=User.FindFirstValue(ClaimTypes.Email);
             var result = await _authenticationService.GetUserByEmailAsync(email!);
-            return HandelResult(result);
+            return HandleResult(result);
 
         }
     } }

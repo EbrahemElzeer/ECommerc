@@ -48,6 +48,7 @@ namespace ECommerceApi
             builder.Services.AddScoped<ICacheRepository, CacheRepository>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             builder.Services.AddAuthentication(opt =>
             {

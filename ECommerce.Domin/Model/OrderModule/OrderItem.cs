@@ -8,7 +8,7 @@ namespace ECommerce.Domin.Model.OrderModule
 {
     public class OrderItem:BaseEntity<int>
     {
-        public ProductItemOrderd Produc { get; set; }= default!;
+        public ProductItemOrderd Product { get; set; }= default!;
         public decimal Price { get; set; }
         public int Quantity { get; set; }
     }
